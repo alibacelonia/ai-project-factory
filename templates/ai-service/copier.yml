@@ -1,0 +1,52 @@
+_subdirectory: template
+_templates_suffix: .jinja
+_answers_file: .copier-answers.yml
+_envops:
+  variable_start_string: "[["
+  variable_end_string: "]]"
+  keep_trailing_newline: true
+  trim_blocks: true
+  lstrip_blocks: true
+
+project_name:
+  type: str
+description:
+  type: str
+  default: An offline-friendly AI backend service
+project_slug:
+  type: str
+  default: "[[ project_name ]]"
+package_name:
+  type: str
+  default: "[[ project_name | replace('-', '_') ]]"
+project_type:
+  type: str
+  default: ai-service
+template_version:
+  type: str
+  default: 0.2.0
+ai_integration:
+  type: bool
+  default: false
+background_jobs:
+  type: bool
+  default: false
+llm_provider:
+  type: bool
+  default: false
+aws_bedrock:
+  type: bool
+  default: false
+openai_api:
+  type: bool
+  default: false
+rag:
+  type: bool
+  default: false
+vector_database:
+  type: bool
+  default: false
+document_processing:
+  type: bool
+  default: false
+

@@ -1,0 +1,58 @@
+from __future__ import annotations
+
+{% if openai_api %}
+import os
+
+{% endif %}
+from [[ package_name ]].config import Settings
+from [[ package_name ]].providers.base import AIProvider, ProviderConfigurationError
+from [[ package_name ]].providers.mock import MockProvider
+{% if openai_api %}
+
+
+class OpenAIProvider:
+    def __init__(self, model: str) -> None:
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise ProviderConfigurationError("OPENAI_API_KEY is required for AI_PROVIDER=openai")
+        if not model:
+            raise ProviderConfigurationError("AI_MODEL is required for AI_PROVIDER=openai")
+        from openai import AsyncOpenAI
+
+        self._client = AsyncOpenAI(api_key=api_key)
+        self._model = model
+
+    async def generate(self, prompt: str) -> str:
+        response = await self._client.responses.create(model=self._model, input=prompt)
+        return response.output_text
+{% endif %}
+{% if aws_bedrock %}
+
+
+class BedrockProvider:
+    def __init__(self, model: str) -> None:
+        if not model:
+            raise ProviderConfigurationError("AI_MODEL is required for AI_PROVIDER=bedrock")
+        import boto3
+
+        self._client = boto3.client("bedrock-runtime")
+        self._model = model
+
+    async def generate(self, prompt: str) -> str:
+        response = self._client.converse(
+            modelId=self._model,
+            messages=[{"role": "user", "content": [{"text": prompt}]}],
+        )
+        return response["output"]["message"]["content"][0]["text"]
+{% endif %}
+
+
+def create_provider(settings: Settings | None = None) -> AIProvider:
+    selected = settings or Settings.from_environment()
+    if selected.provider == "mock":
+        return MockProvider()
+{% if openai_api %}    if selected.provider == "openai":
+        return OpenAIProvider(selected.model)
+{% endif %}{% if aws_bedrock %}    if selected.provider == "bedrock":
+        return BedrockProvider(selected.model)
+{% endif %}    raise ProviderConfigurationError(f"Unsupported AI provider: {selected.provider}")

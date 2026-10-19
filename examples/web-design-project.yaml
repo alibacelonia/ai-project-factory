@@ -1,0 +1,64 @@
+project:
+  name: luminous-dashboard
+  description: A local-first SaaS dashboard with a configurable visual system
+  type: web-saas
+  stage: mvp
+  template_version: 0.2.0
+
+stack:
+  language: typescript/python
+  backend: fastapi
+  frontend: nextjs
+  database: postgresql
+
+features:
+  authentication: false
+  database_migrations: false
+  ai_integration: false
+  background_jobs: false
+  subscriptions: false
+  email_notifications: false
+
+deployment:
+  provider: local
+  docker: true
+
+development:
+  testing: true
+  linting: true
+  ci_cd: true
+
+constraints:
+  prioritize_low_cost: true
+  offline_development: true
+
+design:
+  enabled: true
+  style: glassmorphism
+  layout: dashboard
+  theme:
+    mode: system
+    palette: indigo-cyan
+    primary_color: "#6366F1"
+    accent_color: "#22D3EE"
+  typography:
+    preset: sans
+    heading: Inter
+    body: Inter
+    scale: default
+  surfaces:
+    border_radius: medium
+    shadow_intensity: medium
+    transparency: medium
+    blur_intensity: medium
+  effects:
+    animation: subtle
+    enhancements:
+      - glass-surfaces
+  responsive:
+    mobile: true
+    tablet: true
+    desktop: true
+  accessibility:
+    target: WCAG-2.2-AA
+    reduced_motion: true

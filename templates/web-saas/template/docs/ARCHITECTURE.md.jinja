@@ -1,0 +1,31 @@
+# Architecture
+
+## Technology stack
+
+- Frontend: Next.js, React, and TypeScript.
+- Backend: Python 3.12, FastAPI, and Pydantic.
+- Data store: PostgreSQL in Docker Compose; the liveness endpoint does not require it.
+- UI system: semantic CSS custom properties, a shared component layer, and the `[[ ui_style ]]` preset applied independently from the `[[ ui_layout ]]` layout.
+
+## Component architecture
+
+The independently runnable `frontend/` and `backend/` communicate over HTTP. `docker-compose.yml` provides local orchestration and PostgreSQL. Enabled capability names are exposed by the backend so implementation can be added incrementally; disabled capabilities produce no dependencies or services.
+
+The frontend design system keeps three concerns separate: the visual preset defines tokens and component presentation; the layout defines composition; effects add optional motion or depth. `frontend/design-system/presets.json` is the catalog used by generated code, while `frontend/design-system/config.ts` holds this project's selection. Shared components consume semantic `ui-*` styles so changing a preset normally leaves application behavior and component markup intact.
+
+## Data flow
+
+The browser renders the Next.js application and calls backend APIs. The backend validates request data before application logic and persistence. Add a readiness check separately when database-backed behavior is implemented.
+
+## Security considerations
+
+Keep secrets in environment variables, validate identity and authorization server-side, use parameterized database access, and apply least privilege to integrations.
+
+Frontend accessibility targets WCAG 2.2 AA where applicable. Theme initialization occurs before first paint to avoid an incorrect-theme flash. Focus, disabled, error, and reduced-motion states are part of the component contract. Decorative glass, glow, depth, texture, and motion must retain readable opaque or two-dimensional fallbacks.
+
+## Deployment approach
+
+Local development can use separate uv/npm processes or Docker Compose. Production deployment is intentionally out of scope.
+
+Visual effects use CSS by default. No animation, WebGL, or third-party component library is required. Expensive effects should be reduced on small screens and lazy-loaded only when a product requirement justifies them.
+

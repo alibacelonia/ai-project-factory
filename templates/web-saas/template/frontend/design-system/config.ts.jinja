@@ -1,0 +1,35 @@
+import presets from "./presets.json";
+
+export const UI_STYLE_IDS = presets.map((preset) => preset.id);
+
+export type UiStyle = (typeof UI_STYLE_IDS)[number];
+export type UiLayout =
+  | "standard"
+  | "dashboard"
+  | "bento-grid"
+  | "editorial"
+  | "landing-page"
+  | "sidebar-application"
+  | "split-screen"
+  | "full-screen";
+export type ThemeMode = "light" | "dark" | "system";
+export type UiEffect =
+  | "none"
+  | "subtle-transitions"
+  | "aurora-gradients"
+  | "glass-surfaces"
+  | "kinetic-animation"
+  | "spatial-depth";
+
+/** Generated design choices. Keep this in sync with project.yaml when restyling. */
+export const designConfig = {
+  style: "[[ ui_style | default('minimalism') ]]" as UiStyle,
+  layout: "[[ ui_layout | default('standard') ]]" as UiLayout,
+  theme: "[[ theme_mode | default('system') ]]" as ThemeMode,
+  effects: [[ ui_effects | default(['subtle-transitions']) | tojson ]] as UiEffect[],
+  primaryColor: "[[ primary_color | default('#6366F1') ]]",
+  accentColor: "[[ accent_color | default('#22D3EE') ]]",
+} as const;
+
+export const selectedPreset =
+  presets.find((preset) => preset.id === designConfig.style) ?? presets[0];

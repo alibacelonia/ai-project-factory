@@ -1,0 +1,30 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import test from "node:test";
+
+test("home page contains the project name", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  assert.match(page, /[[ project_name ]]/);
+});
+
+test("generated UI uses independent style, layout, effect, and theme controls", async () => {
+  const layout = await readFile(new URL("../app/layout.tsx", import.meta.url), "utf8");
+  const theme = await readFile(new URL("../components/theme-switcher.tsx", import.meta.url), "utf8");
+  assert.match(layout, /data-style=/);
+  assert.match(layout, /data-layout=/);
+  assert.match(layout, /data-effects=/);
+  assert.match(layout, /suppressHydrationWarning/);
+  assert.match(theme, /prefers-color-scheme: dark/);
+});
+
+test("semantic components and accessibility fallbacks are present", async () => {
+  const components = await readFile(new URL("../components/ui.tsx", import.meta.url), "utf8");
+  const styles = await readFile(new URL("../app/styles.css", import.meta.url), "utf8");
+  for (const component of ["Button", "Input", "Textarea", "Select", "Checkbox", "Card", "Dialog", "Dropdown", "Table", "Tabs", "Badge", "Alert", "Navigation", "Sidebar", "Header", "Tooltip", "LoadingState", "EmptyState"]) {
+    assert.match(components, new RegExp(`export function ${component}`));
+  }
+  assert.match(styles, /prefers-reduced-motion: reduce/);
+  assert.match(styles, /@supports not \(backdrop-filter/);
+  assert.match(styles, /--color-focus/);
+});
+

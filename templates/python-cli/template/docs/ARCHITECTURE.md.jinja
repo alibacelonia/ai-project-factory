@@ -1,0 +1,25 @@
+# Architecture
+
+## Technology stack
+
+- Python 3.12+, Typer, Rich, PyYAML, pytest, Ruff, and uv.
+
+## Component architecture
+
+- `cli.py` owns command parsing and user-facing output.
+- `config.py` reads environment-based runtime settings.
+- `logging.py` configures structured JSON application logs.
+- `exceptions.py` contains expected application errors.
+
+## Data flow
+
+Command arguments are validated by Typer and command handlers, processed by application logic, and rendered with Rich. Configuration comes from explicit environment variables; no secret values are committed.
+
+## Security considerations
+
+Validate all external input, avoid shell interpolation, never log secrets, and keep dependency additions reviewable.
+
+## Deployment approach
+
+Install locally with uv or as a Python package. No cloud service is required.
+

@@ -1,0 +1,57 @@
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import { designConfig, selectedPreset } from "../design-system/config";
+import "./styles.css";
+
+export const metadata: Metadata = {
+  title: "[[ project_name ]]",
+  description: [[ description | tojson ]],
+};
+
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  // This runs before React hydrates, so system theme selection does not flash or
+  // produce different server/client markup. Preset data is static build output.
+  const themeScript = `(() => { try {
+    const configured = ${JSON.stringify(designConfig.theme)};
+    const preset = ${JSON.stringify(selectedPreset)};
+    const stored = localStorage.getItem("ui-theme");
+    const requested = ["light", "dark", "system"].includes(stored) ? stored : configured;
+    const resolved = requested === "system" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : requested;
+    const tokens = preset[resolved];
+    const root = document.documentElement;
+    root.dataset.theme = resolved;
+    root.dataset.themePreference = requested;
+    root.style.colorScheme = resolved;
+    const variables = {
+      "color-background": tokens.colors.background, "color-foreground": tokens.colors.foreground,
+      "color-primary": ${JSON.stringify(designConfig.primaryColor)} || tokens.colors.primary,
+      "color-secondary": tokens.colors.secondary, "color-accent": ${JSON.stringify(designConfig.accentColor)} || tokens.colors.accent,
+      "color-surface": tokens.colors.surface, "color-muted": tokens.colors.muted,
+      "color-destructive": tokens.colors.destructive, "color-border": tokens.colors.border,
+      "color-focus": tokens.colors.focus, "font-heading": tokens.typography.heading,
+      "font-body": tokens.typography.body, "font-weight-heading": tokens.typography.weight,
+      "letter-spacing-heading": tokens.typography.letter_spacing, "radius-surface": tokens.surface.radius,
+      "border-width": tokens.surface.border_width, "shadow-surface": tokens.surface.shadow,
+      "surface-opacity": tokens.surface.transparency, "backdrop-blur": tokens.surface.blur,
+      "motion-duration": tokens.motion.duration, "motion-easing": tokens.motion.easing,
+      "motion-hover": tokens.motion.hover
+    };
+    for (const [name, value] of Object.entries(variables)) root.style.setProperty("--" + name, value);
+  } catch { document.documentElement.dataset.theme = "light"; } })();`;
+
+  return (
+    <html
+      lang="en"
+      data-style={designConfig.style}
+      data-layout={designConfig.layout}
+      data-effects={designConfig.effects.join(" ")}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body>{children}</body>
+    </html>
+  );
+}
+

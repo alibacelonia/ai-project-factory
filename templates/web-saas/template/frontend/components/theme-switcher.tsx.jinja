@@ -1,0 +1,90 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+import { designConfig, selectedPreset, type ThemeMode } from "../design-system/config";
+
+const choices: ThemeMode[] = ["light", "dark", "system"];
+
+function resolvedTheme(mode: ThemeMode) {
+  if (mode !== "system") return mode;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function applyTheme(mode: ThemeMode) {
+  const resolved = resolvedTheme(mode);
+  const tokens = selectedPreset[resolved];
+  const root = document.documentElement;
+  root.dataset.theme = resolved;
+  root.dataset.themePreference = mode;
+  root.style.colorScheme = resolved;
+  const variables: Record<string, string> = {
+    "color-background": tokens.colors.background,
+    "color-foreground": tokens.colors.foreground,
+    "color-primary": designConfig.primaryColor || tokens.colors.primary,
+    "color-secondary": tokens.colors.secondary,
+    "color-accent": designConfig.accentColor || tokens.colors.accent,
+    "color-surface": tokens.colors.surface,
+    "color-muted": tokens.colors.muted,
+    "color-destructive": tokens.colors.destructive,
+    "color-border": tokens.colors.border,
+    "color-focus": tokens.colors.focus,
+    "font-heading": tokens.typography.heading,
+    "font-body": tokens.typography.body,
+    "font-weight-heading": tokens.typography.weight,
+    "letter-spacing-heading": tokens.typography.letter_spacing,
+    "radius-surface": tokens.surface.radius,
+    "border-width": tokens.surface.border_width,
+    "shadow-surface": tokens.surface.shadow,
+    "surface-opacity": tokens.surface.transparency,
+    "backdrop-blur": tokens.surface.blur,
+    "motion-duration": tokens.motion.duration,
+    "motion-easing": tokens.motion.easing,
+    "motion-hover": tokens.motion.hover,
+  };
+  Object.entries(variables).forEach(([name, value]) => root.style.setProperty(`--${name}`, value));
+}
+
+export function ThemeSwitcher({ defaultMode }: { defaultMode: ThemeMode }) {
+  const [mode, setMode] = useState<ThemeMode>(defaultMode);
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem("ui-theme") as ThemeMode | null;
+    const initial = stored && choices.includes(stored) ? stored : defaultMode;
+    setMode(initial);
+    applyTheme(initial);
+  }, [defaultMode]);
+
+  useEffect(() => {
+    if (mode !== "system") return;
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const update = () => {
+      applyTheme("system");
+    };
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, [mode]);
+
+  function select(next: ThemeMode) {
+    setMode(next);
+    window.localStorage.setItem("ui-theme", next);
+    applyTheme(next);
+  }
+
+  return (
+    <fieldset className="ui-theme-switcher" aria-label="Color theme">
+      <legend className="ui-sr-only">Color theme</legend>
+      {choices.map((choice) => (
+        <button
+          aria-pressed={mode === choice}
+          className="ui-button ui-button--quiet"
+          key={choice}
+          onClick={() => select(choice)}
+          type="button"
+        >
+          {choice.charAt(0).toUpperCase() + choice.slice(1)}
+        </button>
+      ))}
+    </fieldset>
+  );
+}

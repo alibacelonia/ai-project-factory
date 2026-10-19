@@ -1,0 +1,9 @@
+{
+  "name": "ai-project-factory-design-gallery",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "test": "node --test tests/*.test.mjs"
+  }
+}

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Interactive gallery for AI Project Factory UI presets" />
+    <title>AI Project Factory · UI Gallery</title>
+    <link rel="stylesheet" href="/templates/web-saas/template/frontend/app/styles.css.jinja" />
+    <link rel="stylesheet" href="/gallery/gallery.css" />
+    <script type="module" src="/gallery/app.js"></script>
+  </head>
+  <body class="gallery-body">
+    <a class="gallery-skip" href="#preview">Skip to preview</a>
+    <header class="gallery-header">
+      <div><span class="gallery-kicker">AI Project Factory</span><h1>UI design gallery</h1></div>
+      <p>Explore all presets through the same semantic tokens and component classes used in generated Next.js projects.</p>
+    </header>
+    <main class="gallery-shell">
+      <aside class="gallery-panel" aria-label="Gallery controls">
+        <label>Filter styles<input id="filter" type="search" placeholder="Try portfolio or glass" /></label>
+        <div id="style-list" class="gallery-style-list" role="listbox" aria-label="Design styles"></div>
+      </aside>
+      <section class="gallery-workbench">
+        <form class="gallery-toolbar" id="controls">
+          <label>Theme<select id="theme"><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></select></label>
+          <label>Layout<select id="layout"></select></label>
+          <label>Effects<select id="effect"></select></label>
+          <label>Viewport<select id="viewport"><option value="desktop">Desktop</option><option value="tablet">Tablet</option><option value="mobile">Mobile</option></select></label>
+          <label>Showcase<select id="screen"><option value="components">Components</option><option value="dashboard">Dashboard</option><option value="landing">Landing page</option></select></label>
+          <label class="gallery-check"><input id="compare" type="checkbox" />Compare</label>
+          <label id="compare-field" hidden>Compare with<select id="comparison"></select></label>
+        </form>
+        <div class="gallery-summary">
+          <div><span id="style-id"></span><h2 id="style-name">Loading presets…</h2><p id="style-description"></p></div>
+          <div class="gallery-actions"><button id="copy-config" type="button">Copy project.yaml design</button><span id="copy-status" role="status"></span></div>
+        </div>
+        <div class="gallery-preview-frame" id="preview-frame">
+          <section id="preview" class="gallery-preview" aria-label="Interactive style preview"></section>
+          <section id="comparison-preview" class="gallery-preview" aria-label="Comparison style preview" hidden></section>
+        </div>
+        <details class="gallery-tokens"><summary>Inspect active design tokens</summary><pre id="tokens"></pre></details>
+      </section>
+    </main>
+    <noscript>This interactive gallery requires JavaScript, but generated applications do not require JavaScript for their base layout.</noscript>
+  </body>
+</html>

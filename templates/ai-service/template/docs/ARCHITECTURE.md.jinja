@@ -1,0 +1,25 @@
+# Architecture
+
+## Technology stack
+
+- Python 3.12+, FastAPI, Pydantic, pytest, Ruff, and uv.
+
+## Component architecture
+
+- `main.py` defines HTTP boundaries and dependency injection.
+- `providers/` defines the provider protocol, an offline mock, and only the selected external adapters.
+- `prompts/` stores prompt text outside Python code.
+{% if rag %}- The in-memory retrieval seam provides deterministic local RAG behavior and can later be replaced behind the same boundary.
+{% endif %}
+## Data flow
+
+Validated API input is combined with a versioned prompt template and passed to the configured provider. The default provider is deterministic and local. External clients are constructed only when selected and invoked.
+
+## Security considerations
+
+Never accept provider keys in request bodies, log prompts only under an explicit data policy, validate uploaded/document inputs, and grant Bedrock permissions only for required models and actions.
+
+## Deployment approach
+
+Run with uvicorn locally. External AI providers, vector stores, workers, and cloud deployment remain opt-in.
+

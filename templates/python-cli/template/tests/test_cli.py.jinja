@@ -1,0 +1,34 @@
+from typer.testing import CliRunner
+
+from [[ package_name ]].cli import app, build_greeting
+from [[ package_name ]].config import Settings
+from [[ package_name ]].exceptions import ApplicationError
+
+runner = CliRunner()
+
+
+def test_hello_command() -> None:
+    result = runner.invoke(app, ["hello", "Codex"])
+
+    assert result.exit_code == 0
+    assert "Hello, Codex!" in result.stdout
+
+
+def test_empty_name_is_rejected() -> None:
+    result = runner.invoke(app, ["hello", "   "])
+
+    assert result.exit_code == 2
+    assert "Name must not be empty" in result.stdout
+
+
+def test_build_greeting_uses_settings() -> None:
+    assert build_greeting("Ada", Settings(greeting_prefix="Welcome")) == "Welcome, Ada!"
+
+
+def test_build_greeting_rejects_long_name() -> None:
+    try:
+        build_greeting("x" * 101, Settings())
+    except ApplicationError as exc:
+        assert "100 characters" in str(exc)
+    else:
+        raise AssertionError("Expected ApplicationError")

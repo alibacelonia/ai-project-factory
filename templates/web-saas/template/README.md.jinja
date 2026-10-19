@@ -1,0 +1,99 @@
+# [[ project_name ]]
+
+[[ description ]]
+
+Generated from AI Project Factory's `web-saas` profile, version [[ template_version ]].
+
+The generated frontend uses the `[[ ui_style ]]` preset with the `[[ ui_layout ]]` layout and `[[ theme_mode ]]` theme mode. Style, composition, and optional effects are separate configuration choices.
+
+## Prerequisites
+
+- Python 3.12+, uv, Node.js 20.9+, npm, and optionally Docker Compose
+
+## Run locally without Docker
+
+```bash
+cd backend
+uv sync --extra dev
+uv run uvicorn app.main:app --reload
+```
+
+In another terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend is at `http://localhost:3000`; backend health is at `http://localhost:8000/health`. Neither startup path requires AWS or an AI key. PostgreSQL is included for application development but is not coupled to liveness.
+
+## Run with Docker Compose
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+## Test
+
+```bash
+cd backend && uv sync --extra dev && uv run pytest
+cd ../frontend && npm install && npm run typecheck && npm test && npm run build
+docker compose config --quiet
+```
+
+## UI design system
+
+`project.yaml` is the source of truth for design intent. The current selection is:
+
+- Style: `[[ ui_style ]]`
+- Layout: `[[ ui_layout ]]`
+- Theme: `[[ theme_mode ]]`
+- Palette: `[[ color_palette ]]`
+- Typography: `[[ typography_preset ]]`
+- Animation: `[[ animation ]]`
+- Effects: `[[ ui_effects | join(', ') ]]`
+
+The preset catalog lives at `frontend/design-system/presets.json`. It supplies intentional light and dark semantic tokens for background, foreground, primary, secondary, accent, surface, muted, destructive, border, and focus colors, plus typography, surface, and motion tokens. Components in `frontend/components/ui.tsx` consume the shared `ui-*` contract rather than carrying a copy per style.
+
+Theme switching supports light, dark, and operating-system preference. The inline initialization in the root layout resolves the theme before the page becomes visible, and the switcher persists the user's choice. Do not remove `suppressHydrationWarning` without replacing that initialization strategy.
+
+### Change the style safely
+
+1. Update `design.style` and any independent `layout`, theme, or effect settings in `project.yaml`.
+2. Update the generated values in `frontend/design-system/config.ts`; do not edit business logic, API calls, or state management.
+3. Ask Codex to use `$ui-design` and load `.agents/skills/ui-design/references/<style>.md`.
+4. Review any structural recommendation before changing custom screens. Most restyles should only change tokens and shared variants.
+5. Run type checking, tests, and a production build, then manually inspect light, dark, mobile, tablet, keyboard, and reduced-motion behavior.
+
+Custom primary and accent colors must use six-digit hex notation. Effects are optional enhancements; use `none` alone, and only enable `glass-surfaces` with non-`none` transparency and blur. `kinetic-ui` requires animation, and kinetic animation must keep reduced-motion alternatives enabled.
+
+### Codex UI workflow
+
+Use the focused UI skill for a new screen or restyle:
+
+```text
+Use $ui-design to implement this screen using the design selection in project.yaml.
+Preserve the existing application behavior and verify responsive and accessible states.
+```
+
+Request an independent review without authorizing edits:
+
+```text
+Delegate a review to ui-ux-engineer. Report design-system, responsive,
+interaction, accessibility, and hardcoded-token findings by severity.
+```
+
+Automated checks support accessibility work but do not establish WCAG conformance. Manually verify reading order, keyboard operation, visible focus, contrast over effects, target sizes, zoom, and assistive-technology labels.
+
+## Requirements and Codex workflow
+
+Edit `project.yaml` and `docs/PROJECT.md`. Ask Codex to use `$requirements-analysis`, review `docs/TASKS.md` and `docs/ARCHITECTURE.md`, then use `$feature-development`, `$testing`, and `$code-review`. Use `$ui-design` for graphical work. Delegate focused reviews to `software-architect`, `security-reviewer`, or `ui-ux-engineer`; those agents inherit the parent sandbox and approvals.
+
+Selected optional capabilities are recorded in `project.yaml` and the backend's `/health` response as explicit extension seams. They are not production integrations until their provider-specific acceptance criteria are defined and implemented.
+
+## Template updates
+
+Keep `.copier-answers.yml`. Before applying a newer versioned template, commit or back up work, run Copier, inspect the diff, resolve conflicts, and rerun all checks. Conflict-free updates are not guaranteed.
+

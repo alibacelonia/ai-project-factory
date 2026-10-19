@@ -1,0 +1,64 @@
+project:
+  name: [[ project_name ]]
+  description: [[ description | tojson ]]
+  type: web-saas
+  stage: mvp
+  template_version: "[[ template_version ]]"
+
+stack:
+  language: typescript/python
+  backend: fastapi
+  frontend: nextjs
+  database: postgresql
+
+features:
+  authentication: [[ authentication | lower ]]
+  database_migrations: [[ database_migrations | lower ]]
+  ai_integration: [[ ai_integration | lower ]]
+  background_jobs: [[ background_jobs | lower ]]
+  subscriptions: [[ subscriptions | lower ]]
+  email_notifications: [[ email_notifications | lower ]]
+
+deployment:
+  provider: local
+  docker: true
+
+development:
+  testing: true
+  linting: true
+  ci_cd: true
+
+constraints:
+  prioritize_low_cost: true
+  offline_development: true
+
+design:
+  enabled: [[ design_enabled | lower ]]
+  style: [[ ui_style ]]
+  layout: [[ ui_layout ]]
+  theme:
+    mode: [[ theme_mode ]]
+    palette: [[ color_palette ]]
+    primary_color: [[ (primary_color | tojson) if primary_color else 'null' ]]
+    accent_color: [[ (accent_color | tojson) if accent_color else 'null' ]]
+  typography:
+    preset: [[ typography_preset ]]
+    heading: null
+    body: null
+    scale: default
+  surfaces:
+    border_radius: medium
+    shadow_intensity: medium
+    transparency: [[ 'medium' if 'glass-surfaces' in ui_effects else 'none' ]]
+    blur_intensity: [[ 'medium' if 'glass-surfaces' in ui_effects else 'none' ]]
+  effects:
+    animation: [[ animation ]]
+    enhancements: [[ ui_effects | tojson ]]
+  responsive:
+    mobile: true
+    tablet: true
+    desktop: true
+  accessibility:
+    target: WCAG-2.2-AA
+    reduced_motion: true
+

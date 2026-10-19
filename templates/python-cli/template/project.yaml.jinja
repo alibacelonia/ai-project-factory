@@ -1,0 +1,31 @@
+project:
+  name: [[ project_name ]]
+  description: [[ description | tojson ]]
+  type: python-cli
+  stage: mvp
+  template_version: "[[ template_version ]]"
+
+stack:
+  language: python
+  backend: null
+  frontend: null
+  database: null
+
+features:
+  authentication: false
+  ai_integration: false
+  background_jobs: false
+
+deployment:
+  provider: local
+  docker: false
+
+development:
+  testing: true
+  linting: true
+  ci_cd: true
+
+constraints:
+  prioritize_low_cost: true
+  offline_development: true
+

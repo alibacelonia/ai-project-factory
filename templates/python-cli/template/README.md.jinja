@@ -1,0 +1,38 @@
+# [[ project_name ]]
+
+[[ description ]]
+
+Generated from AI Project Factory's `python-cli` profile, version [[ template_version ]].
+
+## Prerequisites
+
+- Python 3.12+
+- [uv](https://docs.astral.sh/uv/)
+
+## Install and run
+
+```bash
+uv sync --extra dev
+uv run [[ project_slug ]] hello Codex
+```
+
+Runtime configuration is optional. Copy `.env.example` values into your shell environment if needed; the application does not load `.env` automatically.
+
+## Test and lint
+
+```bash
+uv run ruff format --check .
+uv run ruff check .
+uv run pytest
+```
+
+## Requirements-driven workflow
+
+Edit only `project.yaml` and `docs/PROJECT.md` to define the product. Ask Codex to use `$requirements-analysis`, review the resulting `docs/TASKS.md` and `docs/ARCHITECTURE.md`, then use `$feature-development`. Use `$testing` and `$code-review` before completion.
+
+For a significant design question, ask Codex to delegate a read-only review to `software-architect`. For security-sensitive changes, delegate to `security-reviewer`. Custom-agent instructions do not replace the parent session's sandbox and approval controls.
+
+## Template updates
+
+`.copier-answers.yml` and `project.yaml` record template provenance and version. For a future update, commit or back up your work, run Copier from the matching versioned template source, inspect the diff, resolve conflicts, and rerun checks. Updates are reviewable but are not guaranteed to be conflict-free.
+

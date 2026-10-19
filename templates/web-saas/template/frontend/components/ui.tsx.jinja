@@ -1,0 +1,99 @@
+"use client";
+
+import { useId, useRef, useState } from "react";
+import type {
+  ButtonHTMLAttributes,
+  HTMLAttributes,
+  InputHTMLAttributes,
+  ReactNode,
+  SelectHTMLAttributes,
+  TextareaHTMLAttributes,
+} from "react";
+
+function classes(...values: Array<string | undefined>) {
+  return values.filter(Boolean).join(" ");
+}
+
+export function Button({ className, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
+  return <button className={classes("ui-button", className)} {...props} />;
+}
+
+export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
+  return <input className={classes("ui-input", className)} {...props} />;
+}
+
+export function Textarea({ className, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return <textarea className={classes("ui-input ui-textarea", className)} {...props} />;
+}
+
+export function Select({ className, children, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
+  return <select className={classes("ui-input ui-select", className)} {...props}>{children}</select>;
+}
+
+export function Checkbox({ children, ...props }: InputHTMLAttributes<HTMLInputElement> & { children: ReactNode }) {
+  return <label className="ui-checkbox"><input type="checkbox" {...props} /><span>{children}</span></label>;
+}
+
+export function Card({ className, ...props }: HTMLAttributes<HTMLElement>) {
+  return <article className={classes("ui-card", className)} {...props} />;
+}
+
+export function Badge({ className, ...props }: HTMLAttributes<HTMLSpanElement>) {
+  return <span className={classes("ui-badge", className)} {...props} />;
+}
+
+export function Alert({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={classes("ui-alert", className)} role="status" {...props} />;
+}
+
+export function Header({ className, ...props }: HTMLAttributes<HTMLElement>) {
+  return <header className={classes("ui-header", className)} {...props} />;
+}
+
+export function Navigation({ label = "Primary", ...props }: HTMLAttributes<HTMLElement> & { label?: string }) {
+  return <nav aria-label={label} className="ui-nav" {...props} />;
+}
+
+export function Sidebar({ className, ...props }: HTMLAttributes<HTMLElement>) {
+  return <aside className={classes("ui-sidebar", className)} {...props} />;
+}
+
+export function Table({ children, caption }: { children: ReactNode; caption: string }) {
+  return <div className="ui-table-wrap" tabIndex={0}><table className="ui-table"><caption className="ui-sr-only">{caption}</caption>{children}</table></div>;
+}
+
+export function Tabs({ labels, active = 0 }: { labels: string[]; active?: number }) {
+  const [selected, setSelected] = useState(active);
+  const refs = useRef<Array<HTMLButtonElement | null>>([]);
+  function onKeyDown(event: React.KeyboardEvent<HTMLButtonElement>, index: number) {
+    const offset = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+    if (!offset) return;
+    event.preventDefault();
+    const next = (index + offset + labels.length) % labels.length;
+    setSelected(next);
+    refs.current[next]?.focus();
+  }
+  return <div className="ui-tabs" role="tablist" aria-label="View selection">{labels.map((label, index) => <button aria-selected={index === selected} className="ui-tab" key={label} onClick={() => setSelected(index)} onKeyDown={(event) => onKeyDown(event, index)} ref={(node) => { refs.current[index] = node; }} role="tab" tabIndex={index === selected ? 0 : -1} type="button">{label}</button>)}</div>;
+}
+
+export function Dropdown({ label, children }: { label: string; children: ReactNode }) {
+  return <details className="ui-dropdown"><summary className="ui-button ui-button--quiet">{label}</summary><div className="ui-dropdown__menu">{children}</div></details>;
+}
+
+export function Dialog({ title, children }: { title: string; children: ReactNode }) {
+  const id = useId();
+  const dialog = useRef<HTMLDialogElement>(null);
+  return <><Button onClick={() => dialog.current?.showModal()}>Open {title}</Button><dialog aria-labelledby={id} className="ui-dialog" ref={dialog}><strong id={id}>{title}</strong><div>{children}</div><form method="dialog"><Button>Close</Button></form></dialog></>;
+}
+
+export function Tooltip({ label, children }: { label: string; children: ReactNode }) {
+  return <span className="ui-tooltip" tabIndex={0}>{children}<span className="ui-tooltip__content" role="tooltip">{label}</span></span>;
+}
+
+export function LoadingState({ label = "Loading" }: { label?: string }) {
+  return <span className="ui-loading" role="status"><span aria-hidden="true" />{label}</span>;
+}
+
+export function EmptyState({ title, children }: { title: string; children: ReactNode }) {
+  return <section className="ui-empty"><strong>{title}</strong><p>{children}</p></section>;
+}

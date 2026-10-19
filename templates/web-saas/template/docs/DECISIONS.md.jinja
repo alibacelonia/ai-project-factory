@@ -1,0 +1,16 @@
+# Architecture decisions
+
+## ADR-001: Start from the [[ project_type ]] profile
+
+- **Status:** accepted
+- **Context:** The project needs a lightweight, independently runnable foundation.
+- **Decision:** Use AI Project Factory template version [[ template_version ]] and enable only features recorded in `project.yaml`.
+- **Consequences:** The initial system stays small. Later architecture changes must be recorded here with their tradeoffs.
+
+## ADR-002: Separate visual style, layout, and effects
+
+- **Status:** accepted
+- **Context:** The project starts with `[[ ui_style ]]`, `[[ ui_layout ]]`, and independently selected effects. A style change must not disturb application behavior.
+- **Decision:** Centralize semantic tokens and shared component presentation. Keep page composition and optional motion/depth enhancements independently configurable.
+- **Consequences:** Most restyles are token and shared-variant changes. Structural changes require a reviewed plan, and specialized effects must keep accessible fallbacks.
+

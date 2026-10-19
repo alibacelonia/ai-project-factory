@@ -1,0 +1,43 @@
+from __future__ import annotations
+
+import logging
+
+import typer
+from rich.console import Console
+
+from [[ package_name ]].config import Settings
+from [[ package_name ]].exceptions import ApplicationError
+from [[ package_name ]].logging import configure_logging
+
+app = typer.Typer(help=[[ description | tojson ]], no_args_is_help=True)
+console = Console()
+logger = logging.getLogger(__name__)
+
+
+@app.callback()
+def main() -> None:
+    """Run [[ project_name ]] commands."""
+
+
+def build_greeting(name: str, settings: Settings) -> str:
+    cleaned = name.strip()
+    if not cleaned:
+        raise ApplicationError("Name must not be empty.")
+    if len(cleaned) > 100:
+        raise ApplicationError("Name must be 100 characters or fewer.")
+    return f"{settings.greeting_prefix}, {cleaned}!"
+
+
+@app.command()
+def hello(name: str = typer.Argument("world", help="Person or thing to greet.")) -> None:
+    """Print a configurable greeting."""
+
+    settings = Settings.from_environment()
+    configure_logging(settings.log_level)
+    try:
+        greeting = build_greeting(name, settings)
+    except ApplicationError as exc:
+        logger.warning("Invalid greeting input")
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=2) from exc
+    console.print(greeting)

@@ -1,0 +1,103 @@
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Checkbox,
+  Dropdown,
+  Dialog,
+  EmptyState,
+  Header,
+  Input,
+  LoadingState,
+  Navigation,
+  Select,
+  Sidebar,
+  Table,
+  Tabs,
+  Textarea,
+  Tooltip,
+} from "../components/ui";
+import { ThemeSwitcher } from "../components/theme-switcher";
+import { designConfig, selectedPreset } from "../design-system/config";
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
+export default function Home() {
+  return (
+    <div className="ui-app-shell">
+      <Header>
+        <a className="ui-brand" href="#top">[[ project_name ]]</a>
+        <Navigation>
+          <a href="#overview">Overview</a>
+          <a href="#components">Components</a>
+          <a href={`${apiUrl}/health`}>API health</a>
+        </Navigation>
+        <ThemeSwitcher defaultMode={designConfig.theme} />
+      </Header>
+
+      <Sidebar>
+        <span className="ui-eyebrow">Workspace</span>
+        <a aria-current="page" href="#overview">Dashboard</a>
+        <a href="#activity">Activity</a>
+        <a href="#components">Design system</a>
+      </Sidebar>
+
+      <main className="ui-main" id="top">
+        <section className="ui-hero" id="overview">
+          <div>
+            <p className="ui-eyebrow">{selectedPreset.name} starter</p>
+            <h1>Build a product people remember.</h1>
+            <p className="ui-lede">{[[ description | tojson ]]}</p>
+            <div className="ui-actions">
+              <Button>Start a project</Button>
+              <Button className="ui-button--secondary">View roadmap</Button>
+            </div>
+          </div>
+          <Card className="ui-hero-card">
+            <Badge>Live</Badge>
+            <strong className="ui-stat">84%</strong>
+            <span>Activation this month</span>
+            <div className="ui-chart" aria-label="Activation trend: steadily increasing" role="img" />
+          </Card>
+        </section>
+
+        <section className="ui-grid" aria-label="Product overview">
+          <Card><span className="ui-eyebrow">Active users</span><strong className="ui-stat">12.8k</strong><small>+18% this month</small></Card>
+          <Card><span className="ui-eyebrow">Projects</span><strong className="ui-stat">328</strong><small>Across 14 teams</small></Card>
+          <Card><span className="ui-eyebrow">Availability</span><strong className="ui-stat">99.99%</strong><small>Last 30 days</small></Card>
+        </section>
+
+        <section className="ui-section" id="components">
+          <div className="ui-section-heading">
+            <div><p className="ui-eyebrow">Reusable primitives</p><h2>One system, every state</h2></div>
+            <Tabs labels={["Overview", "Usage", "Settings"]} />
+          </div>
+          <div className="ui-grid ui-grid--components">
+            <Card>
+              <h3>New workspace</h3>
+              <label>Workspace name<Input placeholder="Acme studio" /></label>
+              <label>Plan<Select defaultValue="pro"><option value="pro">Professional</option><option value="starter">Starter</option></Select></label>
+              <label>Notes<Textarea placeholder="What will you build?" /></label>
+              <Checkbox defaultChecked>Email weekly progress</Checkbox>
+              <Button>Create workspace</Button>
+            </Card>
+            <Card>
+              <h3>Recent activity</h3>
+              <Table caption="Recent project activity"><thead><tr><th>Project</th><th>Status</th><th>Owner</th></tr></thead><tbody><tr><td>Atlas</td><td><Badge>Ready</Badge></td><td>Sam</td></tr><tr><td>Northstar</td><td><LoadingState label="Building" /></td><td>Lee</td></tr></tbody></Table>
+              <Alert>All systems are operating normally.</Alert>
+            </Card>
+            <Card>
+              <h3>Actions</h3>
+              <Dropdown label="Open menu"><a href="#activity">View activity</a><button type="button">Duplicate</button></Dropdown>
+              <Dialog title="Quick action">This dialog uses the same semantic surface, focus, and motion tokens.</Dialog>
+              <Tooltip label="Uses your selected semantic tokens"><Badge>Hover for details</Badge></Tooltip>
+              <EmptyState title="No invitations">Invite a teammate when you are ready.</EmptyState>
+            </Card>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}
+
