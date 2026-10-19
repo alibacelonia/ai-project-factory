@@ -2,6 +2,15 @@
 
 AI Project Factory is a local, Copier-based generator for small projects that are ready for requirements-driven development with OpenAI Codex. It creates independently runnable applications with concise repository instructions, reusable skills, project-scoped custom agents, tests, and CI. Generation itself makes no AI API calls and requires no paid service.
 
+## See it in action
+
+- [Architecture](docs/ARCHITECTURE.md) explains the validation and generation boundaries.
+- [Demo guide](docs/DEMO.md) provides a reproducible 90-second walkthrough.
+- [Generated knowledge API](examples/generated/knowledge-api/README.md) is a committed output snapshot that can run entirely with its deterministic mock provider.
+- [Roadmap](docs/ROADMAP.md) separates committed direction from released functionality.
+
+The factory produces deliberately small starters, not finished production platforms. Optional capabilities either add a tested local implementation or an explicit extension seam. Production authentication, billing, queues, vector databases, deployment infrastructure, and service-level guarantees remain application-specific work.
+
 ## Prerequisites
 
 - Python 3.12 or newer
@@ -285,6 +294,7 @@ uv sync --extra dev
 uv run ruff format --check .
 uv run ruff check .
 uv run pytest
+uv run python scripts/scan_secrets.py
 ```
 
 The suite validates names, profile/feature/design compatibility, all 22 preset records, semantic token completeness, layouts and effects, safe destinations, YAML, skill metadata, agent TOML, file substitution, representative generations, generated Python tests, gallery coverage, theme behavior, and the dependency-free frontend smoke test. Run the generated frontend's type check, tests, and production build for release validation. GitHub Actions runs its configured checks without secrets, cloud credentials, live models, or production databases.
@@ -330,6 +340,7 @@ ai-project-factory/
 ├── .codex/agents/           # Factory-scoped specialist agents
 ├── .github/workflows/       # Factory CI
 ├── gallery/                 # Local, dependency-free 22-style explorer
+├── scripts/                 # Reproducible demo and security checks
 ├── shared/                  # Canonical guidance and engineering references
 ├── src/project_factory/     # CLI, schema, generator, and validation
 ├── templates/               # Three independently usable Copier roots
