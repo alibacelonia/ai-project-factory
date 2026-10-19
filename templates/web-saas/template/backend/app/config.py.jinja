@@ -14,7 +14,8 @@ class Settings:
         origins = os.getenv("CORS_ORIGINS", "http://localhost:3000")
         return cls(
             database_url=os.getenv(
-                "DATABASE_URL", "postgresql://app:app@localhost:5432/[[ package_name ]]"
+                "DATABASE_URL",
+                "postgresql://app:app@localhost:5432/[[ package_name ]]",  # pragma: allowlist secret
             ),
             cors_origins=tuple(item.strip() for item in origins.split(",") if item.strip()),
         )
